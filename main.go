@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 )
@@ -97,4 +98,21 @@ func redirectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.Redirect(w, r, url.ShortURL, http.StatusFound)
+}
+
+
+//Main function
+func main() {
+	http.HandleFunc("/", page)
+	http.HandleFunc("/shorten", ShortURLHandler)
+	http.HandleFunc("/redirect", redirectHandler)
+
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+
+	fmt.Println("Listening on 8080")
+	err := http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println("Server error:", err)
+	}
 }
